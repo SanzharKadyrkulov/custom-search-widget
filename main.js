@@ -66,7 +66,7 @@ template.innerHTML = `
 		<div class="widget">
 			<div class="item">
 				<label>Откуда</label>
-				<select id='select-from'>
+				<select id="select-from">
 					<option value="1">São Paulo, São Paulo,...</option>
 					<option value="2">São Paulo, São Paulo,...</option>
 					<option value="3">São Paulo, São Paulo,...</option>
@@ -74,7 +74,7 @@ template.innerHTML = `
 			</div>
 			<div class="item">
 				<label>Куда</label>
-				<select id='select-to'>
+				<select id="select-to">
 					<option value="1">São Paulo, São Paulo,...</option>
 					<option value="2">São Paulo, São Paulo,...</option>
 					<option value="3">São Paulo, São Paulo,...</option>
@@ -83,8 +83,8 @@ template.innerHTML = `
 			<div class="item">
 				<label>Даты</label>
 				<div class="dates">
-					<input type="date" />
-					<input type="date" />
+					<input id="date-from" type="date" />
+					<input id="date-to" type="date" />
 				</div>
 			</div>
 			<button>Найти</button>
@@ -100,6 +100,8 @@ class SearchWidget extends HTMLElement {
 
 		this.selectFrom = shadow.querySelector("#select-from");
 		this.selectTo = shadow.querySelector("#select-to");
+		this.dateFrom = shadow.querySelector("#date-from");
+		this.dateTo = shadow.querySelector("#date-to");
 		this.cities = [];
 	}
 
@@ -134,7 +136,7 @@ class SearchWidget extends HTMLElement {
 	}
 
 	connectedCallback() {
-		// this.getCities();
+		this.dateFrom.setAttribute("min", getToday());
 	}
 
 	// disconnectedCallback() {
@@ -162,3 +164,12 @@ search.getCities().then(({ data }) => {
 	search.cities = data.slice(0, 20);
 });
 console.log(search);
+
+function getToday() {
+	const date = new Date();
+	const year = date.getFullYear();
+	const month = String(date.getMonth() + 1).padStart(2, "0");
+	const day = String(date.getDate()).padStart(2, "0");
+
+	return `${year}-${month}-${day}`;
+}
