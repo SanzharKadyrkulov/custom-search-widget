@@ -56,37 +56,28 @@ template.innerHTML = `
 		overflow: hidden;
 		text-overflow: ellipsis;
 		max-width: 201px;
+		outline-color: initial;
 	}
 
 	</style>
-	<div class="app">
-		<div class="widget">
-			<div class="item">
-				<label>Откуда</label>
-				<select id="select-from">
-					<option value="1">São Paulo, São Paulo,...</option>
-					<option value="2">São Paulo, São Paulo,...</option>
-					<option value="3">São Paulo, São Paulo,...</option>
-				</select>
-			</div>
-			<div class="item">
-				<label>Куда</label>
-				<select id="select-to">
-					<option value="1">São Paulo, São Paulo,...</option>
-					<option value="2">São Paulo, São Paulo,...</option>
-					<option value="3">São Paulo, São Paulo,...</option>
-				</select>
-			</div>
-			<div class="item">
-				<label>Даты</label>
-				<div class="dates">
-					<input id="date-from" type="date" />
-					<input id="date-to" type="date" />
-				</div>
-			</div>
-			<button id="search-btn">Найти</button>
+	<form class="widget">
+		<div class="item">
+			<label>Откуда</label>
+			<select required id="select-from"></select>
 		</div>
-	</div>
+		<div class="item">
+			<label>Куда</label>
+			<select required id="select-to"></select>
+		</div>
+		<div class="item">
+			<label>Даты</label>
+			<div class="dates">
+				<input required id="date-from" type="date" />
+				<input required id="date-to" type="date" />
+			</div>
+		</div>
+		<button type="submit" id="search-btn">Найти</button>
+	</form>
 	`;
 
 class SearchWidget extends HTMLElement {
@@ -113,7 +104,20 @@ class SearchWidget extends HTMLElement {
 		});
 
 		this.button = shadow.querySelector("#search-btn");
-		this.button.addEventListener("click", () => {
+		this.button.addEventListener("click", (e) => {
+			e.preventDefault();
+
+			if (!this.dateFrom.value) {
+				showRedOutline(this.dateFrom);
+				showToast("Please select date from");
+				return;
+			}
+			if (!this.dateTo.value) {
+				showRedOutline(this.dateTo);
+				showToast("Please select date to");
+				return;
+			}
+
 			const event = new CustomEvent("search", {
 				detail: {
 					startPoint: this.selectFrom.value,
@@ -179,6 +183,7 @@ class SearchWidget extends HTMLElement {
 customElements.define("search-widget", SearchWidget);
 
 const search = document.querySelector("search-widget");
+const toast = document.querySelector("#toast");
 
 search.getCities().then(({ data }) => {
 	console.log(data);
@@ -197,4 +202,23 @@ function getToday() {
 	const day = String(date.getDate()).padStart(2, "0");
 
 	return `${year}-${month}-${day}`;
+}
+
+function showToast(message = "Something went wrong") {
+	toast.textContent = message;
+	toast.style.visibility = "visible";
+	toast.style.opacity = "1";
+
+	setTimeout(() => {
+		toast.style.visibility = "hidden";
+		toast.style.opacity = "0";
+	}, 2000);
+}
+
+function showRedOutline(elem) {
+	elem.style.outlineColor = "#dc3545";
+	setTimeout(() => {
+		elem.style.outlineColor = "initial";
+	}, 2000);
+	elem.focus();
 }
