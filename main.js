@@ -102,6 +102,16 @@ class SearchWidget extends HTMLElement {
 		this.dateFrom.setAttribute("min", getToday());
 		this.dateTo = shadow.querySelector("#date-to");
 
+		this.dateFrom.addEventListener("change", () => {
+			const from = this.dateFrom.value;
+			const to = this.dateTo.value;
+			this.dateTo.setAttribute("min", from);
+
+			if (new Date(from) > new Date(to)) {
+				this.dateTo.value = from;
+			}
+		});
+
 		this.button = shadow.querySelector("#search-btn");
 		this.button.addEventListener("click", () => {
 			const event = new CustomEvent("search", {
