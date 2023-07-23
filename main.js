@@ -61,7 +61,7 @@ template.innerHTML = `
 		<div class="widget">
 			<div class="item">
 				<label>Откуда</label>
-				<select>
+				<select id='select-from'>
 					<option value="1">São Paulo, São Paulo,...</option>
 					<option value="2">São Paulo, São Paulo,...</option>
 					<option value="3">São Paulo, São Paulo,...</option>
@@ -69,7 +69,7 @@ template.innerHTML = `
 			</div>
 			<div class="item">
 				<label>Куда</label>
-				<select>
+				<select id='select-to'>
 					<option value="1">São Paulo, São Paulo,...</option>
 					<option value="2">São Paulo, São Paulo,...</option>
 					<option value="3">São Paulo, São Paulo,...</option>
@@ -92,7 +92,54 @@ class SearchWidget extends HTMLElement {
 		super();
 		const shadow = this.attachShadow({ mode: "open" });
 		shadow.append(template.content.cloneNode(true));
+
+		this.selectFrom = shadow.querySelector("#select-from");
+		this.selectTo = shadow.querySelector("#select-to");
+		this.cities = [];
 	}
+
+	renderCities() {
+		this.selectFrom.innerHTML = "";
+		this.selectTo.innerHTML = "";
+		this.cities.forEach((item) => {
+			this.selectFrom.innerHTML += `<option value="${item}">${item}</option>`;
+			this.selectTo.innerHTML += `<option value="${item}">${item}</option>`;
+		});
+	}
+
+	get cities() {
+		return this.data;
+	}
+
+	set cities(arr) {
+		this.data = arr;
+		this.renderCities();
+	}
+
+	// connectedCallback() {
+	// 	// браузер вызывает этот метод при добавлении элемента в документ
+	// 	// (может вызываться много раз, если элемент многократно добавляется/удаляется)
+	// }
+
+	// disconnectedCallback() {
+	// 	// браузер вызывает этот метод при удалении элемента из документа
+	// 	// (может вызываться много раз, если элемент многократно добавляется/удаляется)
+	// }
+
+	// static get observedAttributes() {
+	// 	return [
+	// 		/* массив имён атрибутов для отслеживания их изменений */
+	// 	];
+	// }
+
+	// attributeChangedCallback(name, oldValue, newValue) {
+	// 	// вызывается при изменении одного из перечисленных выше атрибутов
+	// }
 }
 
 customElements.define("search-widget", SearchWidget);
+
+const search = document.querySelector("search-widget");
+
+search.cities = ["bishkek", "dubai"];
+console.log(search);
