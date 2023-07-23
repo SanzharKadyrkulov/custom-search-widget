@@ -170,7 +170,7 @@ class SearchWidget extends HTMLElement {
 	renderCities() {
 		let options = "";
 		this.cities.forEach(({ country, city }) => {
-			options += `<option value="${city}">${city}, ${country}</option>`;
+			options += `<option value=${`${city},${country}`}">${city}, ${country}</option>`;
 		});
 
 		this.selectFrom.innerHTML = options;
