@@ -41,6 +41,7 @@ template.innerHTML = `
 		color: #f2f2f2;
 		font-size: 16px;
 		font-weight: 700;
+		cursor: pointer;
 	}
 	input[type='date'],
 	select {
@@ -58,6 +59,7 @@ template.innerHTML = `
 		width: 201px;
 		max-height: 43px;
 		outline-color: initial;
+		cursor: pointer;
 	}
 	.dates{
 		background-color: #e0e0e0;
@@ -74,9 +76,11 @@ template.innerHTML = `
 		font-weight: 400;
 		font-size: 13px;
 		gap: 5px;
+		cursor: pointer;
 	}
 	#checkbox{
 		accent-color: #333333;
+		cursor: pointer;
 	}
 	</style>
 	<form class="widget">
@@ -188,19 +192,24 @@ customElements.define("search-widget", SearchWidget);
 const search = document.querySelector("#first");
 const search2 = document.querySelector("#second");
 const toast = document.querySelector("#toast");
+const modal = document.querySelector(".modal");
+const closeModal = document.querySelector(".close");
 
 getCities().then(({ data }) => {
-	console.log(data);
 	search.cities = data;
 	search2.cities = [{ city: "bishkek", country: "kyrgyzstan" }];
 });
 
 search.addEventListener("search", (e) => {
+	showModal();
 	console.log(e, "first widget event");
 });
 search2.addEventListener("search", (e) => {
+	showModal();
 	console.log(e, "second widget event");
 });
+
+closeModal.addEventListener("click", hideModal);
 
 async function getCities() {
 	// const res = await fetch("https://countriesnow.space/api/v0.1/countries");
@@ -237,4 +246,11 @@ function showRedOutline(elem) {
 		elem.style.outlineColor = "initial";
 	}, 2000);
 	elem.focus();
+}
+
+function showModal() {
+	modal.style.display = "block";
+}
+function hideModal() {
+	modal.style.display = "none";
 }
