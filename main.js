@@ -42,7 +42,7 @@ template.innerHTML = `
 		font-size: 16px;
 		font-weight: 700;
 	}
-	input,
+	input[type='date'],
 	select {
 		background-color: #e0e0e0;
 		color: #333333;
@@ -56,13 +56,28 @@ template.innerHTML = `
 		overflow: hidden;
 		text-overflow: ellipsis;
 		width: 201px;
+		max-height: 43px;
 		outline-color: initial;
 	}
 	.dates{
 		background-color: #e0e0e0;
 		border-radius: 5px;
 	}
-
+	.wrapper{
+		display: flex;
+		justify-content: space-between;
+		gap: 20px;
+	}
+	.item .wrapper label + label{
+		display: flex;
+		align-items: center;
+		font-weight: 400;
+		font-size: 13px;
+		gap: 5px;
+	}
+	#checkbox{
+		accent-color: #333333;
+	}
 	</style>
 	<form class="widget">
 		<div class="item">
@@ -74,7 +89,14 @@ template.innerHTML = `
 			<select required id="select-to"></select>
 		</div>
 		<div class="item">
-			<label>Даты</label>
+			<div class="wrapper">
+				<label>Даты</label>
+				<label>
+					<input id="checkbox" type="checkbox" />
+					Без конечной даты
+				</label>
+
+			</div>
 			<div class="dates">
 				<input required id="date-from" type="date" />
 				<input required id="date-to" type="date" />
@@ -107,6 +129,11 @@ class SearchWidget extends HTMLElement {
 			}
 		});
 
+		this.checkbox = shadow.querySelector("#checkbox");
+		this.checkbox.addEventListener("change", (e) => {
+			this.dateTo.disabled = e.target.checked;
+		});
+
 		this.button = shadow.querySelector("#search-btn");
 		this.button.addEventListener("click", (e) => {
 			e.preventDefault();
@@ -116,7 +143,7 @@ class SearchWidget extends HTMLElement {
 				showToast("Please select date from");
 				return;
 			}
-			if (!this.dateTo.value) {
+			if (!this.dateTo.value && !this.checkbox.checked) {
 				showRedOutline(this.dateTo);
 				showToast("Please select date to");
 				return;
@@ -154,23 +181,6 @@ class SearchWidget extends HTMLElement {
 		this.data = arr;
 		this.renderCities();
 	}
-
-	connectedCallback() {}
-
-	// disconnectedCallback() {
-	// 	// браузер вызывает этот метод при удалении элемента из документа
-	// 	// (может вызываться много раз, если элемент многократно добавляется/удаляется)
-	// }
-
-	// static get observedAttributes() {
-	// 	return [
-	// 		/* массив имён атрибутов для отслеживания их изменений */
-	// 	];
-	// }
-
-	// attributeChangedCallback(name, oldValue, newValue) {
-	// 	// вызывается при изменении одного из перечисленных выше атрибутов
-	// }
 }
 
 customElements.define("search-widget", SearchWidget);
