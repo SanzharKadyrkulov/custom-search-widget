@@ -55,7 +55,12 @@ template.innerHTML = `
 		border: none;
 		border-radius: 5px;
 		appearance: none;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 201px;
 	}
+
 	</style>
 	<div class="app">
 		<div class="widget">
@@ -98,12 +103,24 @@ class SearchWidget extends HTMLElement {
 		this.cities = [];
 	}
 
+	async getCities() {
+		// const res = await fetch("https://countriesnow.space/api/v0.1/countries");
+		const res = await fetch(
+			"https://countriesnow.space/api/v0.1/countries/population/cities"
+		);
+		const data = await res.json();
+		return data;
+	}
+
 	renderCities() {
 		this.selectFrom.innerHTML = "";
 		this.selectTo.innerHTML = "";
-		this.cities.forEach((item) => {
-			this.selectFrom.innerHTML += `<option value="${item}">${item}</option>`;
-			this.selectTo.innerHTML += `<option value="${item}">${item}</option>`;
+		this.cities.forEach(({ country, city }) => {
+			this.selectFrom.innerHTML += `<option value="${city}">${city}, ${country}</option>`;
+			this.selectTo.innerHTML += `<option value="${city}">${city}, ${country}</option>`;
+			// console.log(country);
+			// // country.cities.forEach((city) => {
+			// // });
 		});
 	}
 
@@ -116,10 +133,9 @@ class SearchWidget extends HTMLElement {
 		this.renderCities();
 	}
 
-	// connectedCallback() {
-	// 	// браузер вызывает этот метод при добавлении элемента в документ
-	// 	// (может вызываться много раз, если элемент многократно добавляется/удаляется)
-	// }
+	connectedCallback() {
+		// this.getCities();
+	}
 
 	// disconnectedCallback() {
 	// 	// браузер вызывает этот метод при удалении элемента из документа
@@ -141,5 +157,8 @@ customElements.define("search-widget", SearchWidget);
 
 const search = document.querySelector("search-widget");
 
-search.cities = ["bishkek", "dubai"];
+search.getCities().then(({ data }) => {
+	console.log(data);
+	search.cities = data.slice(0, 20);
+});
 console.log(search);
