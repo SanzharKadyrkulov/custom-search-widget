@@ -1,17 +1,14 @@
 const template = document.createElement("template");
 template.innerHTML = `
 	<style>
-	@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
 	* {
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0;
 	}
 
-	body {
-		font-family: "Roboto", sans-serif;
-	}
 	.widget {
+		font-family: "Roboto", sans-serif;
 		display: flex;
 		align-items: flex-end;
 		column-gap: 15px;
@@ -87,7 +84,7 @@ template.innerHTML = `
 					<input id="date-to" type="date" />
 				</div>
 			</div>
-			<button>Найти</button>
+			<button id="search-btn">Найти</button>
 		</div>
 	</div>
 	`;
@@ -100,8 +97,24 @@ class SearchWidget extends HTMLElement {
 
 		this.selectFrom = shadow.querySelector("#select-from");
 		this.selectTo = shadow.querySelector("#select-to");
+
 		this.dateFrom = shadow.querySelector("#date-from");
+		this.dateFrom.setAttribute("min", getToday());
 		this.dateTo = shadow.querySelector("#date-to");
+
+		this.button = shadow.querySelector("#search-btn");
+		this.button.addEventListener("click", () => {
+			const event = new CustomEvent("search", {
+				detail: {
+					startPoint: this.selectFrom.value,
+					endPoint: this.selectTo.value,
+					dateFrom: this.dateFrom.value,
+					dateTo: this.dateTo.value,
+				},
+			});
+			this.dispatchEvent(event);
+		});
+
 		this.cities = [];
 	}
 
@@ -135,9 +148,7 @@ class SearchWidget extends HTMLElement {
 		this.renderCities();
 	}
 
-	connectedCallback() {
-		this.dateFrom.setAttribute("min", getToday());
-	}
+	connectedCallback() {}
 
 	// disconnectedCallback() {
 	// 	// браузер вызывает этот метод при удалении элемента из документа
@@ -164,6 +175,10 @@ search.getCities().then(({ data }) => {
 	search.cities = data.slice(0, 20);
 });
 console.log(search);
+
+search.addEventListener("search", (e) => {
+	console.log(e, "search");
+});
 
 function getToday() {
 	const date = new Date();
