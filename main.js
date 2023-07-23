@@ -132,25 +132,14 @@ class SearchWidget extends HTMLElement {
 		this.cities = [];
 	}
 
-	async getCities() {
-		// const res = await fetch("https://countriesnow.space/api/v0.1/countries");
-		const res = await fetch(
-			"https://countriesnow.space/api/v0.1/countries/population/cities"
-		);
-		const data = await res.json();
-		return data;
-	}
-
 	renderCities() {
-		this.selectFrom.innerHTML = "";
-		this.selectTo.innerHTML = "";
+		let options = "";
 		this.cities.forEach(({ country, city }) => {
-			this.selectFrom.innerHTML += `<option value="${city}">${city}, ${country}</option>`;
-			this.selectTo.innerHTML += `<option value="${city}">${city}, ${country}</option>`;
-			// console.log(country);
-			// // country.cities.forEach((city) => {
-			// // });
+			options += `<option value="${city}">${city}, ${country}</option>`;
 		});
+
+		this.selectFrom.innerHTML = options;
+		this.selectTo.innerHTML = options;
 	}
 
 	get cities() {
@@ -185,15 +174,23 @@ customElements.define("search-widget", SearchWidget);
 const search = document.querySelector("search-widget");
 const toast = document.querySelector("#toast");
 
-search.getCities().then(({ data }) => {
+getCities().then(({ data }) => {
 	console.log(data);
-	search.cities = data.slice(0, 20);
+	search.cities = data;
 });
-console.log(search);
 
 search.addEventListener("search", (e) => {
 	console.log(e, "search");
 });
+
+async function getCities() {
+	// const res = await fetch("https://countriesnow.space/api/v0.1/countries");
+	const res = await fetch(
+		"https://countriesnow.space/api/v0.1/countries/population/cities"
+	);
+	const data = await res.json();
+	return data;
+}
 
 function getToday() {
 	const date = new Date();
