@@ -55,8 +55,12 @@ template.innerHTML = `
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		max-width: 201px;
+		width: 201px;
 		outline-color: initial;
+	}
+	.dates{
+		background-color: #e0e0e0;
+		border-radius: 5px;
 	}
 
 	</style>
@@ -171,16 +175,21 @@ class SearchWidget extends HTMLElement {
 
 customElements.define("search-widget", SearchWidget);
 
-const search = document.querySelector("search-widget");
+const search = document.querySelector("#first");
+const search2 = document.querySelector("#second");
 const toast = document.querySelector("#toast");
 
 getCities().then(({ data }) => {
 	console.log(data);
 	search.cities = data;
+	search2.cities = [{ city: "bishkek", country: "kyrgyzstan" }];
 });
 
 search.addEventListener("search", (e) => {
-	console.log(e, "search");
+	console.log(e, "first widget event");
+});
+search2.addEventListener("search", (e) => {
+	console.log(e, "second widget event");
 });
 
 async function getCities() {

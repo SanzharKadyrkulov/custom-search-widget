@@ -13,6 +13,9 @@
 				display: flex;
 				justify-content: center;
 				padding-top: 50px;
+				align-items: center;
+				flex-direction: column;
+				gap: 30px;
 			}
 			#toast {
 				font-family: "Roboto", sans-serif;
@@ -33,7 +36,8 @@
 	</head>
 	<body>
 		<div class="app">
-			<search-widget></search-widget>
+			<search-widget id="first"></search-widget>
+			<search-widget id="second"></search-widget>
 		</div>
 		<div id="toast"></div>
 	</body>
